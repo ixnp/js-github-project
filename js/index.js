@@ -1,27 +1,34 @@
-
 let search = ''
+
+//Page load
 function handledLoad(){
     loadPageInfo()
     .then(json => {
         displayPageInfo(json)
     })
+    .catch(err => {
+        console.error('page load',err)
+      })
 }
+
+//Git hub user search
+//fetches and loads user 
+//fetches uers repos after load
 function handleSearch(ev) {
     ev.preventDefault()
-  
-     search = ev.target.elements['search'].value
+    search = ev.target.elements['search'].value
     loadUser(search)
     .then(json => {
-        console.log('inside loaduser',json)
         displayUser(json)
         
     })
     .catch(err => {
-        console.error('user',err)
+        console.error('search',err)
       })
    
   }
 
+//handles edit for title and description
 function handeEdit(ev){
     ev.preventDefault()
    let title = ev.target.elements['title'].value
@@ -29,18 +36,20 @@ function handeEdit(ev){
 
    updatePage(title,description)
    .then(data => updatecurrentPage(data))
+   .catch(err => {
+    console.error('update',err)
+  })
 
 }
-
+//it updates the page without loseing search content
 function updatecurrentPage(data){
     let currentH1 = document.getElementById('page-title');
     let currentP = document.getElementById('page-description');
     currentH1.innerText = data.title
     currentP.innerText = data.description
-
 }
 
-
+//All of the fetches
 function loadUser(user){
     return fetch(`https://api.github.com/search/users?q=${user}`)
     .then(res => res.json())
@@ -57,13 +66,14 @@ function loadPageInfo(){
     .then(res => res.json())
     .then(data => data)
 }
+
 function updatePage(title,description){
-       console.log(title,description)
+  
     return fetch('http://localhost:3000/pageinfo/1',{
      method: 'PUT',
      headers: {
        'Content-Type' : 'application/json',
-       // 'Accept' : 'application/json'
+
      },
      body: JSON.stringify ({
        title: title,
@@ -72,6 +82,7 @@ function updatePage(title,description){
    }).then(res => res.json());
 }
 
+//all of the displays
 function displayUser(users){
     for (let i = 0; i < 1; i++) {
         let user = users.items[i]
@@ -84,7 +95,6 @@ function displayUser(users){
         .catch(err => {
           console.error('repo',err)
         })
-
       }
 }
 function displayRepos(repos){
@@ -138,9 +148,6 @@ function createLi(data){
   return li
 }
 
-function yourname(name){
-    loadName()
-}
 
 function createUserimg(data){
     let avatar = document.createElement("img");
@@ -151,6 +158,10 @@ function createUserimg(data){
     li.appendChild(avatar);
     return li
 }
+
+
+//function that loads everything up
+//and handles event listeners
 function main(){
     handledLoad()
     let searchForm = document.getElementById('github-form')
