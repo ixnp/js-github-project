@@ -23,12 +23,20 @@ function handleSearch(ev) {
   }
 
 function handeEdit(ev){
-
+    ev.preventDefault()
    let title = ev.target.elements['title'].value
    let description = ev.target.elements['description'].value
 
    updatePage(title,description)
-   .then(data => data)
+   .then(data => updatecurrentPage(data))
+
+}
+
+function updatecurrentPage(data){
+    let currentH1 = document.getElementById('page-title');
+    let currentP = document.getElementById('page-description');
+    currentH1.innerText = data.title
+    currentP.innerText = data.description
 
 }
 
@@ -93,6 +101,8 @@ function displayPageInfo(data){
     let dataContainer = document.getElementById('page-info');
     dataH1.innerText = data[0].title
     dataP.innerText = data[0].description
+    dataH1.id = 'page-title'
+    dataP.id = 'page-description'
     dataContainer.appendChild(dataH1);
     dataContainer.appendChild(dataP);
 }
